@@ -39,4 +39,4 @@ void StreamParser::job() {
     }
 }
 
-}
+} // namespace Develandoo

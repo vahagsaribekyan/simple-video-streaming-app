@@ -7,7 +7,7 @@ COPY . /usr/src/dockertest1
 WORKDIR /usr/src/dockertest1
 
 RUN apt-get update 
-RUN apt-get install --yes libboost-all-dev openssl libssl-dev
+RUN apt-get install --yes libboost-all-dev libssl-dev
 RUN cmake .
 RUN make
 
