@@ -22,7 +22,7 @@ const int         PORT                    = 8080;
 App::App() 
     : _serverPtr(std::make_unique<httplib::SSLServer>(SERVER_CERT_FILE, SERVER_PRIVATE_KEY_FILE))
     , _streamStorePtr(std::make_unique<StreamStore>())
-    , _streamParserPtr(std::make_unique<StreamParser>("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8")) {
+    , _streamParserPtr(std::make_unique<StreamParser>("/usr/src/develandoo/streamingserver/public/index.m3u8")) {
     if (_serverPtr->is_valid()) {
         initRoutes();
 
@@ -36,15 +36,11 @@ App::App()
         _streamParserPtr->setFrameCallback([this](FramePtr&& frame) {
             _streamStorePtr->store(std::move(frame));
         });
-
-        // defualt to VideoStreamStoreType
-        _streamStorePtr->setStrategy(StreamStoreType::VideoStreamStoreType);
-        _streamParserPtr->start();
     }
 };
 
 App::~App() {
-    if(_streamParserPtr) {
+    if(_streamParserPtr && !_streamParserPtr->isStoped()) {
         _streamParserPtr->stop();
     }
 };
@@ -57,13 +53,21 @@ void App::initRoutes() {
 
     _serverPtr->Post("/frames", BasicAuth([this](const auto& req, auto& res) {
         std::cout << "Request received to path /frames" << std::endl;
+        if(!_streamParserPtr->isStoped()) {
+            _streamParserPtr->stop();
+        }
         _streamStorePtr->setStrategy(StreamStoreType::ImageStreamStoreType);
+        _streamParserPtr->start();
         res.set_content("Ok", "text/plain");
     }));
 
     _serverPtr->Post("/record", BasicAuth([this](const auto& req, auto& res) {
         std::cout << "Request received to path /record" << std::endl;
+        if(!_streamParserPtr->isStoped()) {
+            _streamParserPtr->stop();
+        }
         _streamStorePtr->setStrategy(StreamStoreType::VideoStreamStoreType);
+        _streamParserPtr->start();
         res.set_content("Ok", "text/plain");
     }));
 }

@@ -26,6 +26,9 @@ void StreamParser::setFrameCallback(FrameCallback callback) {
     _callback = callback;
 }
 
+bool StreamParser::isStoped() const {
+    return _stoped;
+}
 void StreamParser::job() {
     cv::VideoCapture cap(_url);
     if (!cap.isOpened()) {
@@ -37,7 +40,8 @@ void StreamParser::job() {
     while (cap.read(frame) && !_stoped && _callback) {
         _callback(std::make_unique<cv::Mat>(frame));
     }
-
+    
+    cap.release();
     _stoped = true;
 }
 

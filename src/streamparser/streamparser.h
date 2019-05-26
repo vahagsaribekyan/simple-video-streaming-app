@@ -20,6 +20,7 @@ public:
     void stop();
     void setFrameCallback(FrameCallback callback);
 
+    bool isStoped() const;
 private:
     void job();
 
