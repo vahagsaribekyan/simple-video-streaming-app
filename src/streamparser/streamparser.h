@@ -30,4 +30,4 @@ private:
     bool _stoped;
 };
 
-}
+} // namespace Develandoo

@@ -15,7 +15,7 @@ class BasicAuth {
 public:
     BasicAuth(Callback callback);
     void operator() (const httplib::Request& req, httplib::Response& res);
-    
+
 private:
     bool isAuthorized(const httplib::Request& req);
     bool validateUserPwd(const std::string&);
@@ -24,4 +24,4 @@ private:
     Callback _callback;
 };
 
-}
+} // namespace Develandoo

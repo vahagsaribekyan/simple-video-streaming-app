@@ -78,4 +78,4 @@ int App::start() {
     }
 }
 
-}
+} // namespace Develandoo

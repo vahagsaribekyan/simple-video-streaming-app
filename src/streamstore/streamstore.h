@@ -27,4 +27,4 @@ private:
     StreamStoreStrategyPtr _strategyPtr;
 };
 
-}
+} // namespace Develandoo

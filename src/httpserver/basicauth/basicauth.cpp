@@ -41,9 +41,7 @@ std::string decodeBase64(const std::string t) {
 } // unnamed namespace
 
 BasicAuth::BasicAuth(Callback callback)
-    : _callback(callback) {
-        std::cout << "Initializing basic auth" << std::endl;
-    }
+    : _callback(callback) {}
 
 void BasicAuth::operator() (const httplib::Request& req, httplib::Response& res) {
     std::cout << "checking authorization..." << std::endl;
