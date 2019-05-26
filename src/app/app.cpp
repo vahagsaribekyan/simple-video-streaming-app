@@ -1,17 +1,23 @@
-#define SERVER_CERT_FILE "./cert.pem"
-#define SERVER_PRIVATE_KEY_FILE "./key.pem"
-#define HOST "localhost"
-#define PORT 8080
+#include "app.h"
 
 #include <iostream>
 #include <chrono>
 #include "../streamstore/streamstore.h"
 #include "../streamparser/streamparser.h"
-
-#include "app.h"
+#include "../httpserver/basicauth/basicauth.h"
 
 namespace Develandoo
 {
+
+namespace
+{
+
+const char* const SERVER_CERT_FILE        = "./cert.pem";
+const char* const SERVER_PRIVATE_KEY_FILE = "./key.pem";
+const char* const HOST                    = "localhost";
+const int         PORT                    = 8080;
+
+}
     
 App::App() 
     : _serverPtr(std::make_unique<httplib::SSLServer>(SERVER_CERT_FILE, SERVER_PRIVATE_KEY_FILE))
@@ -30,10 +36,18 @@ App::App()
         _streamParserPtr->setFrameCallback([this](FramePtr&& frame) {
             _streamStorePtr->store(std::move(frame));
         });
+
+        // defualt to VideoStreamStoreType
+        _streamStorePtr->setStrategy(StreamStoreType::VideoStreamStoreType);
+        _streamParserPtr->start();
     }
 };
 
-App::~App() = default;
+App::~App() {
+    if(_streamParserPtr) {
+        _streamParserPtr->stop();
+    }
+};
 
 void App::initRoutes() {
     // handle root to work fine with k8s
@@ -41,19 +55,27 @@ void App::initRoutes() {
         res.set_content("Greeting from video streamer app", "text/plain");
     });
 
-    _serverPtr->Post("/frames", [this](const auto& req, auto& res) {
+    _serverPtr->Post("/frames", BasicAuth([this](const auto& req, auto& res) {
+        std::cout << "Request received to path /frames" << std::endl;
         _streamStorePtr->setStrategy(StreamStoreType::ImageStreamStoreType);
         res.set_content("Ok", "text/plain");
-    });
+    }));
 
-    _serverPtr->Post("/record", [this](const auto& req, auto& res) {
+    _serverPtr->Post("/record", BasicAuth([this](const auto& req, auto& res) {
+        std::cout << "Request received to path /record" << std::endl;
         _streamStorePtr->setStrategy(StreamStoreType::VideoStreamStoreType);
         res.set_content("Ok", "text/plain");
-    });
+    }));
 }
 
 int App::start() {
-    return _serverPtr->is_valid() ? _serverPtr->listen(HOST, PORT) : -1;
+    if (_serverPtr->is_valid()) {
+        std::cout << "Server is running on port: " << PORT << std::endl;
+        return _serverPtr->listen(HOST, PORT);
+    } else {
+        std::cout << "Could not start the server" << std::endl;
+        return -1;
+    }
 }
 
 }

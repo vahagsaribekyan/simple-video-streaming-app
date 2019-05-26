@@ -11,5 +11,7 @@ RUN apt-get install --yes libboost-all-dev libssl-dev
 RUN cmake .
 RUN make
 
+EXPOSE 8080
+
 # Run the program output from the previous step
 CMD ["./video-streaming-app"]
