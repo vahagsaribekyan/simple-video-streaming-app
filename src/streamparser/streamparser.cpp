@@ -37,6 +37,8 @@ void StreamParser::job() {
     while (cap.read(frame) && !_stoped && _callback) {
         _callback(std::make_unique<cv::Mat>(frame));
     }
+
+    _stoped = true;
 }
 
 } // namespace Develandoo
