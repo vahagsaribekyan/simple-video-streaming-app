@@ -7,7 +7,7 @@ COPY . /usr/src/develandoo
 WORKDIR /usr/src/develandoo
 
 RUN apt-get update 
-RUN apt-get install --yes libboost-all-dev libssl-dev nodejs npm ffmpeg
+RUN apt-get install --yes libboost-all-dev libssl-dev ffmpeg
 RUN cmake .
 RUN make
 

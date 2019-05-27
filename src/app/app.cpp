@@ -22,7 +22,7 @@ const int         PORT                    = 8080;
 App::App() 
     : _serverPtr(std::make_unique<httplib::SSLServer>(SERVER_CERT_FILE, SERVER_PRIVATE_KEY_FILE))
     , _streamStorePtr(std::make_unique<StreamStore>())
-    , _streamParserPtr(std::make_unique<StreamParser>("/usr/src/develandoo/streamingserver/public/index.m3u8")) {
+    , _streamParserPtr(std::make_unique<StreamParser>("/usr/src/develandoo/public/index.m3u8")) {
     if (_serverPtr->is_valid()) {
         initRoutes();
 
