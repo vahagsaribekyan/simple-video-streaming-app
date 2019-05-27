@@ -15,14 +15,14 @@ namespace
 const char* const SERVER_CERT_FILE        = "./cert.pem";
 const char* const SERVER_PRIVATE_KEY_FILE = "./key.pem";
 const char* const HOST                    = "localhost";
-const int         PORT                    = 8080;
+const int         PORT                    = 443;
 
 }
     
 App::App() 
     : _serverPtr(std::make_unique<httplib::SSLServer>(SERVER_CERT_FILE, SERVER_PRIVATE_KEY_FILE))
     , _streamStorePtr(std::make_unique<StreamStore>())
-    , _streamParserPtr(std::make_unique<StreamParser>("/usr/src/develandoo/public/index.m3u8")) {
+    , _streamParserPtr(std::make_unique<StreamParser>("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8")) {
     if (_serverPtr->is_valid()) {
         initRoutes();
 
@@ -58,6 +58,7 @@ void App::initRoutes() {
         }
         _streamStorePtr->setStrategy(StreamStoreType::ImageStreamStoreType);
         _streamParserPtr->start();
+
         res.set_content("Ok", "text/plain");
     }));
 
@@ -68,6 +69,7 @@ void App::initRoutes() {
         }
         _streamStorePtr->setStrategy(StreamStoreType::VideoStreamStoreType);
         _streamParserPtr->start();
+
         res.set_content("Ok", "text/plain");
     }));
 }

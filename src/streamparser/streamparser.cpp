@@ -18,7 +18,9 @@ void StreamParser::start() {
 void StreamParser::stop() {
     if(!_stoped) {
         _stoped = true;
-        _task.join();
+        if(_task.joinable()) {
+            _task.join();
+        }
     }
 }
 
