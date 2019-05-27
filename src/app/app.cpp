@@ -18,7 +18,10 @@ const char* const HOST                    = "localhost";
 const int         PORT                    = 443;
 
 }
-    
+
+// streamer url can be changed to ./public/index.m3u8 since the ffmpeg generates dummy video stream
+// currently it as a publically accessible hls streaming server
+
 App::App() 
     : _serverPtr(std::make_unique<httplib::SSLServer>(SERVER_CERT_FILE, SERVER_PRIVATE_KEY_FILE))
     , _streamStorePtr(std::make_unique<StreamStore>())
