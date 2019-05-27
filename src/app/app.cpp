@@ -19,13 +19,10 @@ const int         PORT                    = 443;
 
 }
 
-// streamer url can be changed to ./public/index.m3u8 since the ffmpeg generates dummy video stream
-// currently it as a publically accessible hls streaming server
-
 App::App() 
     : _serverPtr(std::make_unique<httplib::SSLServer>(SERVER_CERT_FILE, SERVER_PRIVATE_KEY_FILE))
     , _streamStorePtr(std::make_unique<StreamStore>())
-    , _streamParserPtr(std::make_unique<StreamParser>("http://qthttp.apple.com.edgesuite.net/1010qwoeiuryfg/sl.m3u8")) {
+    , _streamParserPtr(std::make_unique<StreamParser>("./public/index.m3u8")) {
     if (_serverPtr->is_valid()) {
         initRoutes();
 
@@ -56,9 +53,7 @@ void App::initRoutes() {
 
     _serverPtr->Post("/frames", BasicAuth([this](const auto& req, auto& res) {
         std::cout << "Request received to path /frames" << std::endl;
-        if(!_streamParserPtr->isStoped()) {
-            _streamParserPtr->stop();
-        }
+        _streamParserPtr->stop();
         _streamStorePtr->setStrategy(StreamStoreType::ImageStreamStoreType);
         _streamParserPtr->start();
 
@@ -67,9 +62,7 @@ void App::initRoutes() {
 
     _serverPtr->Post("/record", BasicAuth([this](const auto& req, auto& res) {
         std::cout << "Request received to path /record" << std::endl;
-        if(!_streamParserPtr->isStoped()) {
-            _streamParserPtr->stop();
-        }
+        _streamParserPtr->stop();
         _streamStorePtr->setStrategy(StreamStoreType::VideoStreamStoreType);
         _streamParserPtr->start();
 

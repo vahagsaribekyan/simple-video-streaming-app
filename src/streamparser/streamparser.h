@@ -1,5 +1,6 @@
 #include <string>
 #include <thread>
+#include <mutex>
 #include <functional>
 
 namespace cv { 
@@ -29,6 +30,8 @@ private:
     std::thread _task;
     std::string _url;
     bool _stoped;
+
+    std::mutex _mutex;
 };
 
 } // namespace Develandoo

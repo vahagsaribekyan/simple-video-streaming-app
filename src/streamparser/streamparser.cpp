@@ -9,6 +9,7 @@ StreamParser::StreamParser(const std::string& url)
     , _stoped(true) {}
 
 void StreamParser::start() {
+    std::lock_guard<std::mutex> lock(_mutex);
     if(_stoped) {
         _stoped = false;
         _task = std::thread(&StreamParser::job, this);
@@ -16,11 +17,16 @@ void StreamParser::start() {
 }
 
 void StreamParser::stop() {
-    if(!_stoped) {
-        _stoped = true;
-        if(_task.joinable()) {
-            _task.join();
+    std::lock_guard<std::mutex> lock(_mutex);
+    try {
+        if(!_stoped) {
+            _stoped = true;
+            if(_task.joinable()) {
+                _task.join();
+            }
         }
+    } catch(std::exception& e) {
+        std::cout<<e.what()<<std::endl;
     }
 }
 
@@ -44,7 +50,7 @@ void StreamParser::job() {
     }
     
     cap.release();
-    _stoped = true;
 }
 
 } // namespace Develandoo
+ 
